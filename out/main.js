@@ -3,7 +3,7 @@ import { compress, decode_str, decompress, encode_str } from "./morze.js";
 run();
 async function run() {
     const m = await input("[1-encode, 2-decode]: ");
-    const c = ["y", "н"].includes((await input("use compress [y/N]: ")).toLowerCase());
+    const c = ["y", "н", "у"].includes((await input("use compress [y/N]: ")).toLowerCase());
     if (m == "1") {
         const ca = !c ? false : !["n", "т"].includes((await input("auto compress [Y/n]: ")).toLowerCase());
         let char = (await input("char: ")).toLowerCase();
@@ -16,11 +16,14 @@ async function run() {
             char = char[0];
         }
         let encoded = encode_str(await input("text: "));
+        print("");
         print(encoded);
         encoded = encoded.replaceAll(".", char).replaceAll("-", char2).replaceAll(" ", "-");
+        print("");
         print(encoded);
         if (c) {
             const compressed = await compress(encoded, ca);
+            print("");
             print(compressed);
         }
     }
@@ -38,10 +41,18 @@ async function run() {
         text = text.replaceAll("-", " ").replaceAll("   ", "  ");
         const text1 = text.replaceAll(char1, ".").replaceAll(char2, "-");
         const text2 = text.replaceAll(char2, ".").replaceAll(char1, "-");
+        print("");
         print(text1);
+        print("");
         print(decode_str(text1));
+        print("");
+        print(decode_str(text1, true));
+        print("");
         print(text2);
+        print("");
         print(decode_str(text2));
+        print("");
+        print(decode_str(text2, true));
     }
     else {
         print("Wrong mode");

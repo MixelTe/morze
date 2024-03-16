@@ -1,5 +1,5 @@
 import { input } from "./console.js";
-import { MorseCode, MorseDecode } from "./data.js";
+import { MorseCode, MorseDecodeRu, MorseDecodeEn } from "./data.js";
 import { random } from "./littleLib.js";
 export function encode_str(str) {
     let r = "";
@@ -7,10 +7,10 @@ export function encode_str(str) {
         r += (MorseCode[ch.toUpperCase()] || ch) + " ";
     return r.trim();
 }
-export function decode_str(str) {
+export function decode_str(str, en = false) {
     let r = "";
     for (const ch of str.split(" "))
-        r += MorseDecode[ch] || ch;
+        r += (en ? MorseDecodeEn : MorseDecodeRu)[ch] || ch;
     return r.trim();
 }
 const ascii_lowercase = "abcdefghijklmnopqrstuvwxyz";

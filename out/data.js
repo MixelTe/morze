@@ -1,4 +1,4 @@
-export const MorseCode = {
+const MorseCodeEnOnly = {
     "A": ".-",
     "B": "-...",
     "C": "-.-.",
@@ -25,6 +25,8 @@ export const MorseCode = {
     "X": "-..-",
     "Y": "-.--",
     "Z": "--..",
+};
+const MorseCodeRuOnly = {
     "А": ".-",
     "Б": "-...",
     "В": ".--",
@@ -58,6 +60,8 @@ export const MorseCode = {
     "Э": "..-..",
     "Ю": "..--",
     "Я": ".-.-",
+};
+const MorseCodeOther = {
     "1": ".----",
     "2": "..---",
     "3": "...--",
@@ -89,9 +93,24 @@ export const MorseCode = {
     "#": "........",
     " ": " ",
 };
+export const MorseCode = {
+    ...MorseCodeEnOnly,
+    ...MorseCodeRuOnly,
+    ...MorseCodeOther,
+};
 export const MorseDecode = {
+    "": " ",
+};
+export const MorseDecodeEn = {
+    "": " ",
+};
+export const MorseDecodeRu = {
     "": " ",
 };
 for (let key in MorseCode)
     MorseDecode[MorseCode[key]] = key;
+for (let key in { ...MorseCodeRuOnly, ...MorseCodeEnOnly, ...MorseCodeOther })
+    MorseDecodeEn[MorseCode[key]] = key;
+for (let key in { ...MorseCodeEnOnly, ...MorseCodeRuOnly, ...MorseCodeOther })
+    MorseDecodeRu[MorseCode[key]] = key;
 console.log(MorseDecode);
