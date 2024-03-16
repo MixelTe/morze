@@ -1,5 +1,5 @@
 export type Dict = { [key: string]: string }
-export const MorseCode: Dict = {
+const MorseCodeEnOnly: Dict = {
 	"A": ".-",
 	"B": "-...",
 	"C": "-.-.",
@@ -26,7 +26,8 @@ export const MorseCode: Dict = {
 	"X": "-..-",
 	"Y": "-.--",
 	"Z": "--..",
-
+}
+const MorseCodeRuOnly: Dict = {
 	"А": ".-",
 	"Б": "-...",
 	"В": ".--",
@@ -60,7 +61,8 @@ export const MorseCode: Dict = {
 	"Э": "..-..",
 	"Ю": "..--",
 	"Я": ".-.-",
-
+}
+const MorseCodeOther: Dict = {
 	"1": ".----",
 	"2": "..---",
 	"3": "...--",
@@ -92,11 +94,28 @@ export const MorseCode: Dict = {
 	"#": "........",
 	" ": " ",
 }
+export const MorseCode: Dict = {
+	...MorseCodeEnOnly,
+	...MorseCodeRuOnly,
+	...MorseCodeOther,
+}
 export const MorseDecode: Dict = {
+	"": " ",
+}
+export const MorseDecodeEn: Dict = {
+	"": " ",
+}
+export const MorseDecodeRu: Dict = {
 	"": " ",
 }
 
 for (let key in MorseCode)
 	MorseDecode[MorseCode[key]] = key;
+
+for (let key in { ...MorseCodeRuOnly, ...MorseCodeEnOnly, ...MorseCodeOther })
+	MorseDecodeEn[MorseCode[key]] = key;
+
+for (let key in { ...MorseCodeEnOnly, ...MorseCodeRuOnly, ...MorseCodeOther })
+	MorseDecodeRu[MorseCode[key]] = key;
 
 console.log(MorseDecode);

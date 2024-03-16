@@ -1,5 +1,5 @@
 import { input } from "./console.js";
-import { MorseCode, MorseDecode, type Dict } from "./data.js";
+import { MorseCode, type Dict, MorseDecodeRu, MorseDecodeEn } from "./data.js";
 import { random } from "./littleLib.js";
 
 export function encode_str(str: string)
@@ -10,11 +10,11 @@ export function encode_str(str: string)
 	return r.trim();
 }
 
-export function decode_str(str: string)
+export function decode_str(str: string, en = false)
 {
 	let r = "";
 	for (const ch of str.split(" "))
-		r += MorseDecode[ch] || ch;
+		r += (en ? MorseDecodeEn : MorseDecodeRu)[ch] || ch;
 	return r.trim();
 }
 
