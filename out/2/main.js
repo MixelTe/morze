@@ -8,6 +8,7 @@ const inp_size = Lib.get.input("inp_size");
 Lib.addButtonListener("btn_dot", () => { textEl.value += "."; onTextUpdate(); });
 Lib.addButtonListener("btn_space", () => { textEl.value += " "; onTextUpdate(); });
 Lib.addButtonListener("btn_dash", () => { textEl.value += "-"; onTextUpdate(); });
+Lib.addButtonListener("btn_rem", () => { textEl.value = textEl.value.slice(0, -1); onTextUpdate(); });
 textEl.addEventListener("input", onTextUpdate);
 textEl.value = localStorage.getItem("morze2_text") || "";
 setTimeout(draw);
