@@ -87,6 +87,8 @@ export function CanvasFitToParentClientWH(canvas) {
     const parent = canvas.parentElement;
     if (parent == null)
         throw new Error("Canvas parent not found");
+    canvas.style.width = "0px";
+    canvas.style.height = "0px";
     const w = parent.clientWidth;
     const h = parent.clientHeight;
     canvas.width = w;
