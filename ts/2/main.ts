@@ -6,10 +6,14 @@ const ctx = Lib.getCanvasContext(canvas);
 const inp_perfect = Lib.get.input("inp_perfect");
 const inp_theme = Lib.get.input("inp_theme");
 const inp_size = Lib.get.input("inp_size");
+const inp_lwidth = Lib.get.input("inp_lwidth");
+const inp_rnd = Lib.get.input("inp_rnd");
+const inp_seed = Lib.get.input("inp_seed");
 Lib.addButtonListener("btn_dot", () => { textEl.value += "."; onTextUpdate(); });
 Lib.addButtonListener("btn_space", () => { textEl.value += " "; onTextUpdate(); });
 Lib.addButtonListener("btn_dash", () => { textEl.value += "-"; onTextUpdate(); });
 Lib.addButtonListener("btn_rem", () => { textEl.value = textEl.value.slice(0, textEl.value.length - 1); onTextUpdate(); });
+Lib.addButtonListener("btn_fs", () => { document.body.classList.toggle("fs"); draw(); });
 
 textEl.addEventListener("input", onTextUpdate)
 textEl.value = localStorage.getItem("morze2_text") || "";
@@ -27,7 +31,11 @@ let LH = 8;
 let LW = 0.5;
 let Scale = 6;
 let perfect = false;
+let rnd = 1;
 let light = false;
+let lastC = NaN;
+let seed = 1;
+let random = Lib.random.withSeed(seed);
 
 inp_perfect.addEventListener("input", () =>
 {
@@ -49,6 +57,30 @@ inp_size.addEventListener("input", () =>
 	Scale = inp_size.valueAsNumber;
 	draw();
 });
+inp_lwidth.min = "0.05";
+inp_lwidth.max = "1.5";
+inp_lwidth.step = "0.05";
+inp_lwidth.valueAsNumber = LW;
+inp_lwidth.addEventListener("input", () =>
+{
+	LW = inp_lwidth.valueAsNumber;
+	draw();
+});
+inp_rnd.min = "0";
+inp_rnd.max = "2";
+inp_rnd.step = "0.1";
+inp_rnd.valueAsNumber = rnd;
+inp_rnd.addEventListener("input", () =>
+{
+	rnd = inp_rnd.valueAsNumber;
+	draw();
+});
+inp_seed.valueAsNumber = seed;
+inp_seed.addEventListener("input", () =>
+{
+	seed = inp_seed.valueAsNumber;
+	draw();
+});
 
 function draw()
 {
@@ -58,20 +90,22 @@ function draw()
 	ctx.fillStyle = color;
 	ctx.strokeStyle = color;
 	const chars = textEl.value.split("");
-	let x = 0;
-	let y = 0;
+	let x = LH / 4;
+	let y = LH / 4;
+	random = Lib.random.withSeed(seed);
 	for (const ch of chars)
 	{
 		const { w, drawer } = drawers[ch] || drawers[" "];
-		if ((x + w) * Scale > canvas.width)
+		if ((x + w) * Scale > canvas.width - LH / 2)
 		{
-			x = 0;
+			x = LH / 4;
 			y += LH * 1.5;
 		}
 		ctx.save();
 		ctx.scale(Scale, Scale);
 		ctx.translate(x, y + LH);
 		ctx.scale(1, -1);
+		if (x == LH / 4) ctx.moveTo(0, LH / 3);
 		// ctx.lineWidth = LW / 10;
 		// ctx.strokeRect(0, 0, w, LH);
 		ctx.lineWidth = LW;
@@ -79,6 +113,8 @@ function draw()
 		ctx.restore();
 		x += w;
 	}
+	ctx.lineWidth = LW * Scale;
+	ctx.stroke();
 }
 
 const drawersSimple: { [ch: string]: { w: number, drawer: () => void } } = {
@@ -107,48 +143,51 @@ const drawers: { [ch: string]: { w: number, drawer: () => void } } = {
 		w: 2, drawer()
 		{
 			const W = 2;
-			const B = LH / 3;
+			const B = isNaN(lastC) ? LH / 3 : lastC;
 			const T = LH / 10;
 			const rw = rand(-W * 0.05, W * 0.05);
 			const rh = rand(-LH * 0.05, LH * 0.05);
-			ctx.beginPath();
-			ctx.moveTo(0, B);
+			lastC = LH / 3 + rh() * 1.5;
+			// ctx.beginPath();
+			// ctx.moveTo(0, B);
 			ctx.bezierCurveTo(W / 2 + rw(), B + rh(), W + rw(), T + rh(), W / 2 + rw(), T + rh());
-			ctx.bezierCurveTo(0 + rw(), T + rh(), W / 2 + rw(), B + rh(), W, B);
-			ctx.stroke();
+			ctx.bezierCurveTo(0 + rw(), T + rh(), W / 2 + rw(), B + rh(), W, lastC);
+			// ctx.stroke();
 		},
 	},
 	".": {
 		w: 4, drawer()
 		{
 			const W = 4;
-			const B = LH / 3;
+			const B = isNaN(lastC) ? LH / 3 : lastC;
 			const T = LH / 5 * 4;
 			const rw = rand(-W * 0.1, W * 0.1);
 			const rh = rand(-LH * 0.1, LH * 0.1);
 			const dy = rand(-LH * 0.1, LH * 0.15)();
-			ctx.beginPath();
-			ctx.moveTo(0, B);
+			lastC = LH / 3 + rh() * 1.5;
+			// ctx.beginPath();
+			// ctx.moveTo(0, B);
 			ctx.bezierCurveTo(W / 2 + rw(), B + rh(), W + rw(), T + rh() + dy, W / 2 + rw(), T + dy);
-			ctx.bezierCurveTo(0 + rw(), T + rh() + dy, W / 2 + rw(), B + rh(), W, B);
-			ctx.stroke();
+			ctx.bezierCurveTo(0 + rw(), T + rh() + dy, W / 2 + rw(), B + rh(), W, lastC);
+			// ctx.stroke();
 		}
 	},
 	"-": {
-		w: 4, drawer()
+		w: 3, drawer()
 		{
-			const W = 4;
-			const B = LH / 3;
+			const W = 3;
+			const B = isNaN(lastC) ? LH / 3 : lastC;
 			const T = LH / 5 * 4;
 			const rw = rand(-W * 0.05, W * 0.05);
 			const rh = rand(-LH * 0.05, LH * 0.05);
 			const dx = rand(-W * 0.15, W * 0.15)();
 			const dy = rand(-LH * 0.2, LH * 0.1)();
-			ctx.beginPath();
-			ctx.moveTo(0, B);
+			lastC = LH / 3 + rh() * 1.5;
+			// ctx.beginPath();
+			// ctx.moveTo(0, B);
 			ctx.bezierCurveTo(W / 2 + dx + rw(), B + rh(), W / 6 + dx + rw(), T + dy + rh(), W / 2 + dx, T + dy);
-			ctx.bezierCurveTo(W / 6 * 5 + dx + rw(), T + dy + rh(), W / 2 + dx + rw(), B + rh(), W, B);
-			ctx.stroke();
+			ctx.bezierCurveTo(W / 6 * 5 + dx + rw(), T + dy + rh(), W / 2 + dx + rw(), B + rh(), W, lastC);
+			// ctx.stroke();
 		}
 	},
 }
@@ -156,5 +195,5 @@ const drawers: { [ch: string]: { w: number, drawer: () => void } } = {
 function rand(min: number, max: number)
 {
 	if (perfect) return () => 0;
-	return () => Math.random() * (max - min) + min;
+	return () => (random() * (max - min) + min) * rnd;
 }
